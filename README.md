@@ -16,7 +16,13 @@ ____
 
 ## Install and configuration section
 
-Clone this project at first and then:
+Run this code in your terminal and follow the instructions:
+
+```bash
+wget https://git.io/Je81F -O install.sh && bash install.sh
+```
+
+or clone this project at first and then:
 
 ```bash
 cd dante-proxy-server && bash install.sh
