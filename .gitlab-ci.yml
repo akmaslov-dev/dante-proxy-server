@@ -28,7 +28,7 @@ test_ubuntu-16.04:
   stage: build_test
   
   before_script:
-    - apt-get update && apt-get -y install iproute2 # Dependencies for Ip command
+    - apt-get update && apt-get -y install iproute2 wget # For proper tests
   
   script: 
     - echo -e "$run_params" | ./install.sh # Installing parameters for test
@@ -43,7 +43,7 @@ test_ubuntu-18.04:
   stage: build_test
   
   before_script:
-    - apt-get update && apt-get -y install iproute2 # Dependencies for Ip command
+    - apt-get update && apt-get -y install iproute2 wget # For proper tests
   
   script: 
     - echo -e "$run_params" | ./install.sh # Installing parameters for test
@@ -60,7 +60,7 @@ test_debian-jessie:
   stage: build_test
   
   before_script:
-    - apt-get update && apt-get -y install iproute2 # Dependencies for Ip command
+    - apt-get update && apt-get -y install iproute2 wget # For proper tests
   
   script: 
     - echo -e "$run_params" | ./install.sh # Installing parameters for test
@@ -75,7 +75,7 @@ test_debian-stretch:
   stage: build_test
   
   before_script:
-    - apt-get update && apt-get -y install iproute2 procps # Dependencies for Ip command
+    - apt-get update && apt-get -y install iproute2 procps wget # For proper tests
   
   script: 
     - echo -e "$run_params" | ./install.sh # Installing parameters for test
@@ -90,7 +90,7 @@ test_debian-buster:
   stage: build_test
   
   before_script:
-    - apt-get update && apt-get -y install iproute2 procps # Dependencies for Ip command
+    - apt-get update && apt-get -y install iproute2 procps wget # For proper tests
   
   script: 
     - echo -e "$run_params" | ./install.sh # Installing parameters for test
@@ -112,7 +112,7 @@ test_centos-7:
     new_pattern: '\/usr\/sbin\/sockd -D -f \/etc\/sockd.conf'
     
   before_script:
-    - yum -y update && yum -y install iproute # Dependencies for Ip command
+    - yum -y update && yum -y install iproute wget # For proper tests
     - sed -i "s/$old_pattern/$new_pattern/g" install.sh # Manual process running for test(not like systemd)
   
   script:
@@ -133,7 +133,7 @@ test_centos-8:
     new_pattern: '\/usr\/sbin\/sockd -D -f \/etc\/sockd.conf'
     
   before_script:
-    - yum -y update && yum -y install iproute # Dependencies for Ip command
+    - yum -y update && yum -y install iproute wget # For proper tests
     - sed -i "s/$old_pattern/$new_pattern/g" install.sh # Manual process running for test(not like systemd)
   
   script:
