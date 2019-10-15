@@ -1,0 +1,145 @@
+stages:
+  - lint_test
+  - build_test
+  
+variables:
+    run_params: "1085\ntestproxyuser\nmycoolpassword\nmycoolpassword" # Installing parameters for test
+    project_path: '$CI_PROJECT_DIR' # project path after git clone
+
+cache:
+  untracked: true
+
+# Shellcheck section
+# Code check via shellcheck
+lint_test:
+  image: docker:latest
+  services:
+  - docker:dind
+  stage: lint_test
+  script:
+    - docker pull koalaman/shellcheck
+    - docker run -v "$project_path:/mnt" koalaman/shellcheck -e SC2162 -e SC2034 install.sh # Specific code exeptions for proper code check
+
+
+# Ubuntu system section
+# Ubuntu:16.04
+test_ubuntu-16.04:
+  image: ubuntu:16.04
+  stage: build_test
+  
+  before_script:
+    - apt-get update && apt-get -y install iproute2 # Dependencies for Ip command
+  
+  script: 
+    - echo -e "$run_params" | ./install.sh # Installing parameters for test
+    - "grep 'internal: ' /etc/sockd.conf | awk '{print $2}'" # Show internal interface from config
+    - "grep 'external: ' /etc/sockd.conf | awk '{print $2}'" # Show external interface from config
+    - ( if [[ "$(grep 'port =' /etc/sockd.conf | awk '{print $5}')" == '1085' ]]; then echo "Seems good"; else echo "Something went wrong" && exit 1; fi); # Port check
+    - ( if pgrep sockd; then echo "Process is running, all seems good"; else echo "Something went wrong" && exit 2; fi); # Process check
+
+# Ubuntu:18.04
+test_ubuntu-18.04:
+  image: ubuntu:18.04
+  stage: build_test
+  
+  before_script:
+    - apt-get update && apt-get -y install iproute2 # Dependencies for Ip command
+  
+  script: 
+    - echo -e "$run_params" | ./install.sh # Installing parameters for test
+    - "grep 'internal: ' /etc/sockd.conf | awk '{print $2}'" # Show internal interface from config
+    - "grep 'external: ' /etc/sockd.conf | awk '{print $2}'" # Show external interface from config
+    - ( if [[ "$(grep 'port =' /etc/sockd.conf | awk '{print $5}')" == '1085' ]]; then echo "Seems good"; else echo "Something went wrong" && exit 1; fi); # Port check
+    - ( if pgrep sockd; then echo "Process is running, all seems good"; else echo "Something went wrong" && exit 2; fi); # Process check
+
+
+# Debian system section
+# Debian:jessie
+test_debian-jessie:
+  image: debian:jessie-slim
+  stage: build_test
+  
+  before_script:
+    - apt-get update && apt-get -y install iproute2 # Dependencies for Ip command
+  
+  script: 
+    - echo -e "$run_params" | ./install.sh # Installing parameters for test
+    - "grep 'internal: ' /etc/sockd.conf | awk '{print $2}'" # Show internal interface from config
+    - "grep 'external: ' /etc/sockd.conf | awk '{print $2}'" # Show external interface from config
+    - ( if [[ "$(grep 'port =' /etc/sockd.conf | awk '{print $5}')" == '1085' ]]; then echo "Seems good"; else echo "Something went wrong" && exit 1; fi); # Port check
+    - ( if pgrep sockd; then echo "Process is running, all seems good"; else echo "Something went wrong" && exit 2; fi); # Process check
+
+# Debian:stretch
+test_debian-stretch:
+  image: debian:stretch-slim
+  stage: build_test
+  
+  before_script:
+    - apt-get update && apt-get -y install iproute2 procps # Dependencies for Ip command
+  
+  script: 
+    - echo -e "$run_params" | ./install.sh # Installing parameters for test
+    - "grep 'internal: ' /etc/sockd.conf | awk '{print $2}'" # Show internal interface from config
+    - "grep 'external: ' /etc/sockd.conf | awk '{print $2}'" # Show external interface from config
+    - ( if [[ "$(grep 'port =' /etc/sockd.conf | awk '{print $5}')" == '1085' ]]; then echo "Seems good"; else echo "Something went wrong" && exit 1; fi); # Port check
+    - ( if pgrep sockd; then echo "Process is running, all seems good"; else echo "Something went wrong" && exit 2; fi); # Process check
+
+# Debian:buster
+test_debian-buster:
+  image: debian:buster-slim
+  stage: build_test
+  
+  before_script:
+    - apt-get update && apt-get -y install iproute2 procps # Dependencies for Ip command
+  
+  script: 
+    - echo -e "$run_params" | ./install.sh # Installing parameters for test
+    - "grep 'internal: ' /etc/sockd.conf | awk '{print $2}'" # Show internal interface from config
+    - "grep 'external: ' /etc/sockd.conf | awk '{print $2}'" # Show external interface from config
+    - ( if [[ "$(grep 'port =' /etc/sockd.conf | awk '{print $5}')" == '1085' ]]; then echo "Seems good"; else echo "Something went wrong" && exit 1; fi); # Port check
+    - ( if pgrep sockd; then echo "Process is running, all seems good"; else echo "Something went wrong" && exit 2; fi); # Process check
+
+
+# CentOS system section
+# CentOS:7
+test_centos-7:
+  image: centos:7
+  stage: build_test
+
+  variables:
+    # Vars for manual service run(not like systemd)
+    old_pattern: 'service sockd start'
+    new_pattern: '\/usr\/sbin\/sockd -D -f \/etc\/sockd.conf'
+    
+  before_script:
+    - yum -y update && yum -y install iproute # Dependencies for Ip command
+    - sed -i "s/$old_pattern/$new_pattern/g" install.sh # Manual process running for test(not like systemd)
+  
+  script:
+    - echo -e "$run_params" | ./install.sh # Installing parameters for test
+    - "grep 'internal: ' /etc/sockd.conf | awk '{print $2}'" # Show internal interface from config
+    - "grep 'external: ' /etc/sockd.conf | awk '{print $2}'" # Show external interface from config
+    - ( if [[ "$(grep 'port =' /etc/sockd.conf | awk '{print $5}')" == '1085' ]]; then echo "Seems good"; else echo "Something went wrong" && exit 1; fi); # Port check
+    - ( if pgrep sockd; then echo "Process is running, all seems good"; else echo "Something went wrong" && exit 2; fi); # Process check
+
+# CentOS:8
+test_centos-8:
+  image: centos:8
+  stage: build_test
+
+  variables:
+    # Vars for manual service run(not like systemd)
+    old_pattern: 'service sockd start'
+    new_pattern: '\/usr\/sbin\/sockd -D -f \/etc\/sockd.conf'
+    
+  before_script:
+    - yum -y update && yum -y install iproute # Dependencies for Ip command
+    - sed -i "s/$old_pattern/$new_pattern/g" install.sh # Manual process running for test(not like systemd)
+  
+  script:
+    - echo -e "$run_params" | ./install.sh # Installing parameters for test
+    - "grep 'internal: ' /etc/sockd.conf | awk '{print $2}'" # Show internal interface from config
+    - "grep 'external: ' /etc/sockd.conf | awk '{print $2}'" # Show external interface from config
+    - ( if [[ "$(grep 'port =' /etc/sockd.conf | awk '{print $5}')" == '1085' ]]; then echo "Seems good"; else echo "Something went wrong" && exit 1; fi); # Port check
+    - ( if pgrep sockd; then echo "Process is running, all seems good"; else echo "Something went wrong" && exit 2; fi); # Process check
+    
