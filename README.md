@@ -1,5 +1,6 @@
 # Dante socks proxy server
 
+[![pipeline status](https://gitlab.com/akmaslov/dante-proxy-server/badges/master/pipeline.svg)](https://gitlab.com/akmaslov/dante-proxy-server/commits/master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/akmaslov-dev/dante-proxy-server/blob/master/LICENSE.txt)
 
 ## Main Info
