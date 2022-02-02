@@ -103,6 +103,8 @@ if [[ -e /etc/sockd.conf ]]; then
 						delport="$(grep 'port =' /etc/sockd.conf | awk '{print $5}')"
 						firewall-cmd --zone=public --remove-port="$delport"/tcp
 						firewall-cmd --zone=public --remove-port="$delport"/udp
+						firewall-cmd --runtime-to-permanent
+						firewall-cmd --reload
 					fi
 					echo " "
 					echo "Dante socks proxy server deleted!"
@@ -152,7 +154,7 @@ else
 	fi
 fi
 # Getting dante 1.4.2
-wget https://www.inet.no/dante/files/dante-1.4.2.tar.gz
+wget https://www.inet.no/dante/files/dante-1.4.3.tar.gz
 # Unpacking
 tar xvfz dante-1.4.2.tar.gz && cd dante-1.4.2 || exit 4
 # Configuring dante packets
@@ -371,6 +373,8 @@ else
 	if pgrep firewalld; then
 		firewall-cmd --zone=public --add-port="$port"/tcp
 		firewall-cmd --zone=public --add-port="$port"/udp
+		firewall-cmd --runtime-to-permanent
+		firewall-cmd --reload
 	fi
 	# Starting service
 	service sockd start
