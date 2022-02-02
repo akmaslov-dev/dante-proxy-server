@@ -153,10 +153,10 @@ else
 		yum -y install openssl make gcc
 	fi
 fi
-# Getting dante 1.4.2
+# Getting dante 1.4.3
 wget https://www.inet.no/dante/files/dante-1.4.3.tar.gz
 # Unpacking
-tar xvfz dante-1.4.2.tar.gz && cd dante-1.4.2 || exit 4
+tar xvfz dante-1.4.3.tar.gz && cd dante-1.4.3 || exit 4
 # Configuring dante packets
 ./configure \
 --prefix=/usr \
@@ -351,7 +351,7 @@ else
 	# Creating systemctl service
 	cat > /etc/systemd/system/sockd.service <<-'EOF'
 	[Unit]
-	Description=Dante Socks Proxy v1.4.2
+	Description=Dante Socks Proxy v1.4.3
 	After=network.target
 
 	[Service]
